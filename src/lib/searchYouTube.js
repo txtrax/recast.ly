@@ -10,6 +10,8 @@ $.ajaxPrefilter(function (settings, _, jqXHR) {
   jqXHR.setRequestHeader('Authorization', API_KEY);
 });
 
+/* Note: memory leak with this GET method. Refer to solution */
+
 var searchYouTube = (query, callback) => {
   $.ajax({
     url: 'https://app-hrsei-api.herokuapp.com/api/recastly/videos',

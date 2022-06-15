@@ -1,19 +1,8 @@
-/* TO-DOS:
-
- Import exampleVideoData.js into your App component so it can be used by your React components
- Pass exampleVideoData into the VideoList component
- Refactor the VideoList component to dynamically render one VideoListEntry component for each video object in exampleVideoData
- Refactor the VideoListEntry component to dynamically render based on the video object it receives
- Make sure the tests for VideoList and VideoListEntry are passing. You can open the tests with npm test
-
-*/
-
-/* Note: for some reason when import it wants .js files, not .jsx files!!! */
-
 import exampleVideoData from '../data/exampleVideoData.js';
 import VideoList from './VideoList.js';
 import VideoListEntry from './VideoListEntry.js';
 import VideoPlayer from './VideoPlayer.js';
+import Search from './Search.js';
 import searchYouTube from '../lib/searchYouTube.js';
 
 class App extends React.Component {
@@ -21,9 +10,39 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      videos: exampleVideoData,
-      selected: exampleVideoData[0]
+      videos: [],
+      selected:
+      {
+        id: {
+          videoId: ''
+        },
+        snippet: {
+          thumbnails: {
+            default: {
+              url: ''
+            }
+          },
+          title: '',
+          description: ''
+        }
+      }
     };
+
+    this.onSearch = this.onSearch.bind(this);
+    this.onSelect = this.onSelect.bind(this);
+  }
+
+  componentDidMount() {
+    this.onSearch('');
+  }
+
+  onSearch(query) {
+    searchYouTube(query, (data) => {
+      this.setState({
+        videos: data,
+        selected: data[0]
+      });
+    });
   }
 
   onSelect(video) {
@@ -37,15 +56,15 @@ class App extends React.Component {
       <div>
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
-            <div><h5><em>search</em> view goes here</h5></div>
+            <div><Search onSearch={this.onSearch}/></div>
           </div>
         </nav>
         <div className="row">
           <div className="col-md-7">
-            <div><h5><VideoPlayer video={this.state.selected} /></h5></div>
+            <div><VideoPlayer video={this.state.selected} /></div>
           </div>
           <div className="col-md-5">
-            <VideoList videos={this.state.videos} onSelect={this.onSelect.bind(this)}/>
+            <VideoList videos={this.state.videos} onSelect={this.onSelect}/>
           </div>
         </div>
       </div>
